@@ -3,10 +3,10 @@
 This is an Ethereum contract which provides the following interface.
 
 - Merkle tree in storage
-- constructor(PubKey pubkey, uint8[] memory root_hash, uint value)
-- participate()
-- refund()
-- withdraw(uint8[] memory priv_key)
+- create(uint8[] uid, uint8[] memory pub_key, uint8[] memory encrypted_data, uint value) return (uint8 [])
+- participate(uint8[] data_item_id)
+- refund(uint8[] data_item_id)
+- withdraw(uint8[] data_item_id, uint8[] memory priv_key)
 - getPrivKey() external view return (uint8 [])
 
 ### Merkle tree in storage
