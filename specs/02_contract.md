@@ -19,24 +19,24 @@ uint ZERO_VALUE = uint256(keccak256(abi.encodePacked('df_data_market'))) % SNARK
 ```
 
 #### Contract functions
-  ### 1: build(uint8[] uid, uint8[] memory pub_key, uint8[] memory encrypted_data, uint value)
-  constructor build a contract for sale data
+  ### 1: create(uint8[] uid, uint8[] memory pub_key, uint8[] memory encrypted_data, uint value) return (uint8 [])
+  build a sale data item and return a sale item id 
 
 | Param     |  Description  |
 |----------|------:|
 | pub_key  | public key to encrypt data |
-| encrypted_data |  Encrypted data |
+| encrypted_data_hash |  Encrypted data hash|
 | value  |   Want to sell value  |
 
 
-#### 2: participate()
+#### 2: participate(uint8[] item_id)
 participate the func does not have any params.  address and value was included in the eth transaction. 
 
 
-#### 3: refund()
+#### 3: refund(uint8[] item_id)
   Participant can apply for a refund before the seller withdraw.
 
-#### 4: withdraw(uint8[] memory priv_key)
+#### 4: withdraw(uint8[] item_id, uint8[] memory priv_key)
   The seller withdraw the value when he hash the private key
 | Param     |  Description  |
 |----------|------:|
