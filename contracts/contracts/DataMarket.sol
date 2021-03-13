@@ -4,7 +4,7 @@ import "../github/SolRsaVerify/contracts/SolRsaVerify.sol";
 import "../github/solidity-BigNumber/contracts/BigNumber.sol";
 
 contract DataMarket {
-    enum CommodityStatus {Created, Dones}
+    enum CommodityStatus {Selling, Done}
     uint256 CommodityID = 0;
     address owner;
 
@@ -65,7 +65,7 @@ contract DataMarket {
         _market[CommodityID].rsa.n = pubKey_n;
 
         _market[CommodityID].encrypted_data_hash = encrypted_data_hash;
-        _market[CommodityID].status = CommodityStatus.Created;
+        _market[CommodityID].status = CommodityStatus.Selling;
         _market[CommodityID].received_value = 0;
         _market[CommodityID].flag = 1;
         _market[CommodityID].value = value;
@@ -80,7 +80,7 @@ contract DataMarket {
         require(msg.value > 0, "value is zero");
         require(_market[data_item_id].flag == 1, "data item is not exist");
         require(
-            _market[data_item_id].status == CommodityStatus.Created,
+            _market[data_item_id].status == CommodityStatus.Selling,
             "data item is done"
         );
 
@@ -98,7 +98,7 @@ contract DataMarket {
     function refund(uint256 data_item_id) public payable {
         require(_market[data_item_id].flag == 1, "commodity item is not exist");
         require(
-            _market[data_item_id].status == CommodityStatus.Created,
+            _market[data_item_id].status == CommodityStatus.Selling,
             "item is done"
         );
 
@@ -133,7 +133,7 @@ contract DataMarket {
     ) public payable {
         require(_market[data_item_id].flag == 1, "item is not exist");
         require(
-            _market[data_item_id].status == CommodityStatus.Created,
+            _market[data_item_id].status == CommodityStatus.Selling,
             "item is done"
         );
 
@@ -161,7 +161,7 @@ contract DataMarket {
 
         msg.sender.transfer(_market[data_item_id].received_value);
         _market[data_item_id].rsa.d = modulus;
-        _market[data_item_id].status = CommodityStatus.Dones;
+        _market[data_item_id].status = CommodityStatus.Done;
 
         emit Withdraw(data_item_id, _market[data_item_id].received_value);
         return;
