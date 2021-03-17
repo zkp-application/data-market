@@ -1,4 +1,5 @@
 pragma solidity >=0.4.20 <0.6.0;
+pragma experimental ABIEncoderV2;
 
 import "../github/SolRsaVerify/contracts/SolRsaVerify.sol";
 import "../github/solidity-BigNumber/contracts/BigNumber.sol";
@@ -21,6 +22,7 @@ contract DataMarket {
         uint256 value;
         uint256 received_value;
         bytes encrypted_data_hash;
+        bytes extra;
         RSA rsa;
         mapping(address => uint256) buyer;
         CommodityStatus status;
@@ -51,11 +53,10 @@ contract DataMarket {
         bytes memory _p2,
         bytes memory pubKey_n,
         bytes memory pubkey_e,
+        bytes memory extra,
         uint256 value
     ) public returns (uint256) {
         require(value > 0, "value is zero");
-        CommodityID++;
-
         _market[CommodityID].id = CommodityID;
         _market[CommodityID].buyer[msg.sender] = 0;
 
@@ -68,8 +69,10 @@ contract DataMarket {
         _market[CommodityID].status = CommodityStatus.Selling;
         _market[CommodityID].received_value = 0;
         _market[CommodityID].flag = 1;
+        _market[CommodityID].extra = extra;
         _market[CommodityID].value = value;
-        return CommodityID;
+
+        return CommodityID++;
     }
 
     // buyer participate the data commodity sale
@@ -180,7 +183,8 @@ contract DataMarket {
             CommodityStatus status,
             // mapping (address => uint256) buyer,
             uint256 received_value,
-            bytes memory priv_key
+            bytes memory priv_key,
+            uint256 my_support
         )
     {
         require(_market[data_item_id].flag == 1, "item is not exist");
@@ -192,6 +196,7 @@ contract DataMarket {
         status = _market[data_item_id].status;
         received_value = _market[data_item_id].received_value;
         priv_key = _market[data_item_id].rsa.d;
+        my_support = _market[data_item_id].buyer[msg.sender];
     }
 
     function rsa_key_pair_check(
@@ -242,5 +247,31 @@ contract DataMarket {
             number = number + uint8(b[i]) * (2**(8 * (b.length - (i + 1))));
         }
         return number;
+    }
+
+    struct miniCommodity {
+        uint256 id;
+        bytes extra;
+    }
+
+    // get Commodity list
+    function getCommodityList(uint256 start, uint256 limit)
+        public
+        view
+        returns (miniCommodity[] memory)
+    {
+        require(start <= CommodityID, "no Commodity item by given start");
+        if (start + limit > CommodityID) {
+            limit = CommodityID - start;
+        }
+        miniCommodity[] memory results = new miniCommodity[](limit);
+
+        for (uint256 i = 0; i < limit; i++) {
+            results[i].id = _market[start].id;
+            results[i].extra = _market[start].extra;
+            start++;
+        }
+
+        return results;
     }
 }
