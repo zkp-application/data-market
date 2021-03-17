@@ -1,4 +1,5 @@
 pragma solidity >=0.4.20 <0.6.0;
+pragma experimental ABIEncoderV2;
 
 import "../github/SolRsaVerify/contracts/SolRsaVerify.sol";
 import "../github/solidity-BigNumber/contracts/BigNumber.sol";
@@ -56,8 +57,6 @@ contract DataMarket {
         uint256 value
     ) public returns (uint256) {
         require(value > 0, "value is zero");
-        CommodityID++;
-
         _market[CommodityID].id = CommodityID;
         _market[CommodityID].buyer[msg.sender] = 0;
 
@@ -72,7 +71,8 @@ contract DataMarket {
         _market[CommodityID].flag = 1;
         _market[CommodityID].extra = extra;
         _market[CommodityID].value = value;
-        return CommodityID;
+
+        return CommodityID++;
     }
 
     // buyer participate the data commodity sale
