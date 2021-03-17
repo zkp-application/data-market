@@ -108,10 +108,12 @@ contract("DataMarket", accounts => {
         });
         // check the commodity received value
         await marketInstance.getCommodityInfo(data_item_id, {
-            from: account1
+            from: account2
         }).then(
             function (result) {
                 var received_value = result[6];
+                assert.equal(received_value.toNumber(), received_value, "received_value error");
+                var my_support = result[8];
                 assert.equal(received_value.toNumber(), received_value, "received_value error");
             }
         )
