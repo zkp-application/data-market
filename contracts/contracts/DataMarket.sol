@@ -1,8 +1,8 @@
 pragma solidity >=0.4.20 <0.6.0;
 pragma experimental ABIEncoderV2;
 
-import "../github/SolRsaVerify/contracts/SolRsaVerify.sol";
-import "../github/solidity-BigNumber/contracts/BigNumber.sol";
+import "../github/Rsa/contracts/SolRsaVerify.sol";
+import "../github/BigNumber/contracts/BigNumber.sol";
 
 contract DataMarket {
     enum CommodityStatus {Selling, Done}
@@ -16,6 +16,13 @@ contract DataMarket {
         bytes e;
         bytes d;
     }
+    
+    struct Info {
+        uint64 all;
+        uint64 sold;
+        uint64 selling;
+        uint64 participate;
+    }
 
     struct Commodity {
         uint256 id;
@@ -27,15 +34,23 @@ contract DataMarket {
         mapping(address => uint256) buyer;
         CommodityStatus status;
         uint8 flag;
+        
     }
 
     mapping(uint256 => Commodity) _market; // data_item_id => Commodity
-
+    Info _market_info;
+    
     event Participate(address bidder, uint256 amount, uint256 data_item_id); // buyer participate event
     event Refund(address bidder, uint256 amount, uint256 data_item_id); // buyer refund event
     event Withdraw(uint256 data_item_id, uint256 amount); // seller withdraw event
 
     constructor() public {
+        // init market infomation
+        _market_info.all = 0;
+        _market_info.sold = 0;
+        _market_info.selling = 0;
+        _market_info.participate = 0;
+        
         owner = msg.sender;
     }
 
@@ -71,7 +86,9 @@ contract DataMarket {
         _market[CommodityID].flag = 1;
         _market[CommodityID].extra = extra;
         _market[CommodityID].value = value;
-
+        
+        _market_info.all ++;
+        _market_info.selling ++;
         return CommodityID++;
     }
 
@@ -89,7 +106,8 @@ contract DataMarket {
 
         _market[data_item_id].received_value += msg.value;
         _market[data_item_id].buyer[msg.sender] += msg.value;
-
+        
+        _market_info.participate ++;
         emit Participate(msg.sender, msg.value, data_item_id);
         return;
     }
@@ -165,7 +183,9 @@ contract DataMarket {
         msg.sender.transfer(_market[data_item_id].received_value);
         _market[data_item_id].rsa.d = modulus;
         _market[data_item_id].status = CommodityStatus.Done;
-
+        
+        _market_info.selling --;
+        _market_info.sold ++;
         emit Withdraw(data_item_id, _market[data_item_id].received_value);
         return;
     }
@@ -274,4 +294,24 @@ contract DataMarket {
 
         return results;
     }
+    
+    // get market infomation
+    function getMarketInfo()
+        public 
+        view
+        returns(
+            uint64 all,
+            uint64 sold,
+            uint64 selling,
+            uint64 participate
+               )
+        {
+            all = _market_info.all;
+            sold = _market_info.sold;
+            selling = _market_info.selling;
+            participate = _market_info.participate;
+        }
 }
+
+
+
