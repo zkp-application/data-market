@@ -7,6 +7,7 @@ template MerkleTreeInclusionProof(n_levels) {
     signal input path_elements[n_levels][1];
     
     signal output root;
+    signal output leaf_element;
 
     component hashers[n_levels];
     component mux[n_levels];
@@ -34,6 +35,7 @@ template MerkleTreeInclusionProof(n_levels) {
         levelHashes[i + 1] <== hashers[i].hash;
     }
 
+    leaf_element <== leaf;
     root <== levelHashes[n_levels];
 }
 
