@@ -1,12 +1,9 @@
-const BigNumber = artifacts.require("../github/solidity-BigNumber/contracts/BigNumber.sol");
-const SolRsaVerify = artifacts.require("../github/SolRsaVerify/contracts/SolRsaVerify.sol");
+const memory = artifacts.require("../github/ethereum/solidity-examples/Memory.sol");
 const DataMarket = artifacts.require("DataMarket");
 
 async function doDeploy(deployer) {
-  await deployer.deploy(BigNumber);
-  await deployer.deploy(SolRsaVerify);
-  await deployer.link(SolRsaVerify, DataMarket);
-  await deployer.link(BigNumber, DataMarket);
+  await deployer.deploy(memory);
+  await deployer.link(memory, DataMarket);
   await deployer.deploy(DataMarket);
 }
 
