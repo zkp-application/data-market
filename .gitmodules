@@ -1,0 +1,12 @@
+[submodule "contracts/github.bak/solidity-BigNumber/lib"]
+	path = contracts/github.bak/solidity-BigNumber/lib
+	url = https://github.com/firoorg/solidity-BigNumber.git
+[submodule "contracts/lib"]
+	path = contracts/lib
+	url = https://github.com/firoorg/solidity-BigNumber.git
+[submodule "contracts/github/BigNumber"]
+	path = contracts/github/BigNumber
+	url = https://github.com/firoorg/solidity-BigNumber.git
+[submodule "contracts/github/Rsa"]
+	path = contracts/github/Rsa
+	url = https://github.com/adria0/SolRsaVerify.git

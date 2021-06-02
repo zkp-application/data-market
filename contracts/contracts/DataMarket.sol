@@ -92,6 +92,7 @@ contract DataMarket is Ownable {
         mapping(address => uint) buyer;
         CommodityStatus status;
         uint8 flag;
+        
     }
 
     mapping(uint256 => Commodity) _market; // data_item_id => Commodity
@@ -101,6 +102,12 @@ contract DataMarket is Ownable {
     event Withdraw(uint256 data_item_id, uint amount); // seller withdraw event
 
     constructor() public {
+        // init market infomation
+        _market_info.all = 0;
+        _market_info.sold = 0;
+        _market_info.selling = 0;
+        _market_info.participate = 0;
+        
         owner = msg.sender;
     }
 
@@ -127,7 +134,9 @@ contract DataMarket is Ownable {
         _market[CommodityID].flag = 1;
         _market[CommodityID].extra = extra;
         _market[CommodityID].value = value;
-
+        
+        _market_info.all ++;
+        _market_info.selling ++;
         return CommodityID++;
     }
 
@@ -147,7 +156,8 @@ contract DataMarket is Ownable {
 
         _market[data_item_id].received_value += msg.value;
         _market[data_item_id].buyer[msg.sender] += msg.value;
-
+        
+        _market_info.participate ++;
         emit Participate(msg.sender, msg.value, data_item_id);
         return;
     }
@@ -204,7 +214,9 @@ contract DataMarket is Ownable {
         msg.sender.transfer(_market[data_item_id].received_value);
         _market[data_item_id].privateKey = private_key;
         _market[data_item_id].status = CommodityStatus.Done;
-
+        
+        _market_info.selling --;
+        _market_info.sold ++;
         emit Withdraw(data_item_id, _market[data_item_id].received_value);
         return;
     }
@@ -275,4 +287,24 @@ contract DataMarket is Ownable {
 
         return results;
     }
+    
+    // get market infomation
+    function getMarketInfo()
+        public 
+        view
+        returns(
+            uint64 all,
+            uint64 sold,
+            uint64 selling,
+            uint64 participate
+               )
+        {
+            all = _market_info.all;
+            sold = _market_info.sold;
+            selling = _market_info.selling;
+            participate = _market_info.participate;
+        }
 }
+
+
+

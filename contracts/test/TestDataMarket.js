@@ -44,7 +44,6 @@ contract("DataMarket", accounts => {
 
     it("create new data item correctly", async () => {
         const account1 = accounts[0];
-        const account2 = accounts[1];
         const marketInstance = await DataMarket.deployed();
         // create a new data item
         await marketInstance.create(encrypted_data_hash, private_key_hash, data_extra, value);
@@ -155,6 +154,19 @@ contract("DataMarket", accounts => {
                 assert.equal(data_status.toNumber(), 1, "status error");
                 var priv_key = result[6];
                 assert.equal(priv_key, aes_private, "aes_private error");
+            }
+        )
+
+        marketInstance.getMarketInfo({from: account1}).then(
+            function(result) {
+                var all = result[0];
+                var sold = result[1];
+                var selling = result[2];
+                var participate = result[3];
+                assert.equal(all.toNumber(), 1, "market all info error");
+                assert.equal(sold.toNumber(), 1, "market sold info error");
+                assert.equal(selling.toNumber(), 0, "market selling info error");
+                assert.equal(participate.toNumber(), 1, "market participate info error");
             }
         )
     })
