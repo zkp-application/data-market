@@ -1,6 +1,7 @@
 package img
 
 import (
+	"encoding/base64"
 	"encoding/hex"
 	"errors"
 	"syscall/js"
@@ -12,13 +13,12 @@ var (
 )
 
 func SplitImage(this js.Value, inputs []js.Value) interface{} {
-	var data []byte
-	length := js.CopyBytesToGo(data, inputs[0])
-	if length == 0 {
-		return InvalidDataLength
+	input, err := base64.StdEncoding.DecodeString(inputs[0].String())
+	if err != nil {
+		return err
 	}
 
-	shards, first, err := Split(data)
+	shards, first, err := Split(input)
 	if err != nil {
 		return err
 	}
