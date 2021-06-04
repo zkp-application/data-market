@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"errors"
-	"fmt"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -42,13 +41,14 @@ func Split(rawInput []byte) (shards []string, first []byte, err error) {
 			x2 := min(x+perX, x1-1)
 			y2 := min(y+perY, y1-1)
 
-			fmt.Println(x, x2, y, y2)
 			if rgbImg, ok := img.(*image.RGBA); ok {
 				subImg = rgbImg.SubImage(image.Rect(x, y, x2, y2)).(*image.RGBA)
 			} else if rgbImg, ok := img.(*image.NRGBA); ok {
 				subImg = rgbImg.SubImage(image.Rect(x, y, x2, y2)).(*image.NRGBA)
 			} else if rgbImg, ok := img.(*image.YCbCr); ok {
 				subImg = rgbImg.SubImage(image.Rect(x, y, x2, y2)).(*image.YCbCr)
+			} else if rgbImg, ok := img.(*image.RGBA64); ok {
+				subImg = rgbImg.SubImage(image.Rect(x, y, x2, y2)).(*image.RGBA64)
 			} else {
 				return nil, nil, errors.New("Parse image format failed")
 			}
