@@ -36,7 +36,6 @@ contract Ownable {
             owner = newOwner;
         }
     }
-
 }
 
 
@@ -79,6 +78,12 @@ contract DataMarket is Ownable {
     enum CommodityStatus {Selling, Done}
     uint256 CommodityID = 0;
 
+    // market info
+    uint64 all;
+    uint64 sold;
+    uint64 selling;
+    uint64 participate_addr;
+
     struct Commodity {
         uint256 id;
         uint value;
@@ -86,13 +91,12 @@ contract DataMarket is Ownable {
         bytes encrypted_data_hash;
         bytes extra;
         
-        bytes privateKey;
+        string privateKey;
         bytes privateKeyHash;
         
         mapping(address => uint) buyer;
         CommodityStatus status;
         uint8 flag;
-        
     }
 
     mapping(uint256 => Commodity) _market; // data_item_id => Commodity
@@ -103,10 +107,10 @@ contract DataMarket is Ownable {
 
     constructor() public {
         // init market infomation
-        _market_info.all = 0;
-        _market_info.sold = 0;
-        _market_info.selling = 0;
-        _market_info.participate = 0;
+        all = 0;
+        sold = 0;
+        selling = 0;
+        participate_addr = 0;
         
         owner = msg.sender;
     }
@@ -135,8 +139,8 @@ contract DataMarket is Ownable {
         _market[CommodityID].extra = extra;
         _market[CommodityID].value = value;
         
-        _market_info.all ++;
-        _market_info.selling ++;
+        all ++;
+        selling ++;
         return CommodityID++;
     }
 
@@ -157,7 +161,7 @@ contract DataMarket is Ownable {
         _market[data_item_id].received_value += msg.value;
         _market[data_item_id].buyer[msg.sender] += msg.value;
         
-        _market_info.participate ++;
+        participate_addr ++;
         emit Participate(msg.sender, msg.value, data_item_id);
         return;
     }
@@ -199,7 +203,7 @@ contract DataMarket is Ownable {
      */
     function withdraw(
         uint256 data_item_id,
-        bytes memory private_key
+        string memory private_key
     ) public payable {
         require(_market[data_item_id].flag == 1, "item is not exist");
         require(
@@ -208,15 +212,15 @@ contract DataMarket is Ownable {
         );
 
         Commodity memory data_item = _market[data_item_id];
-        bytes memory pkBytes = abi.encodePacked(sha256(private_key));
+        bytes memory pkBytes = abi.encodePacked(sha256(bytes(private_key)));
         require(equals(pkBytes, data_item.privateKeyHash) == true, "check failed");
     
         msg.sender.transfer(_market[data_item_id].received_value);
         _market[data_item_id].privateKey = private_key;
         _market[data_item_id].status = CommodityStatus.Done;
         
-        _market_info.selling --;
-        _market_info.sold ++;
+        selling --;
+        sold ++;
         emit Withdraw(data_item_id, _market[data_item_id].received_value);
         return;
     }
@@ -246,8 +250,9 @@ contract DataMarket is Ownable {
             // mapping (address => uint256) buyer,
             uint256 received_value,
             bytes memory priv_key_hash,
-            bytes memory priv_key,
-            uint256 my_support
+            string memory priv_key,
+            uint256 my_support,
+            bytes memory extra
         )
     {
         require(_market[data_item_id].flag == 1, "item is not exist");
@@ -259,6 +264,7 @@ contract DataMarket is Ownable {
         priv_key_hash = _market[data_item_id].privateKeyHash;
         priv_key = _market[data_item_id].privateKey;
         my_support = _market[data_item_id].buyer[msg.sender];
+        extra = _market[data_item_id].extra;
     }
 
 
@@ -288,6 +294,7 @@ contract DataMarket is Ownable {
         return results;
     }
     
+    
     // get market infomation
     function getMarketInfo()
         public 
@@ -299,12 +306,10 @@ contract DataMarket is Ownable {
             uint64 participate
                )
         {
-            all = _market_info.all;
-            sold = _market_info.sold;
-            selling = _market_info.selling;
-            participate = _market_info.participate;
+            all = all;
+            sold = sold;
+            selling = selling;
+            participate = participate_addr;
         }
+
 }
-
-
-

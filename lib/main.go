@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	js.Global().Set("splitImage", js.FuncOf(img.SplitImage))
+	js.Global().Set("split", js.FuncOf(img.SplitJs))
+	js.Global().Set("hash", js.FuncOf(img.Hash))
 
 	js.Global().Set("encrypt", js.FuncOf(crypto.AesEncrypt))
 	js.Global().Set("decrypt", js.FuncOf(crypto.AesDecrypt))

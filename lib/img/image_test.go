@@ -2,6 +2,7 @@ package img
 
 import (
 	"encoding/base64"
+	"fmt"
 	"os"
 	"testing"
 )
@@ -21,6 +22,6 @@ func TestSplitImage(t *testing.T) {
 	}
 
 	defer file.Close()
-
+	fmt.Println(shards)
 	file.Write(first)
 }
