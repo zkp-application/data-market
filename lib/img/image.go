@@ -3,6 +3,7 @@ package img
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
 	"errors"
 	"image"
 	_ "image/gif"
@@ -10,9 +11,11 @@ import (
 	"image/png"
 	_ "image/png"
 	"math/big"
+	"syscall/js"
 
 	"github.com/iden3/go-iden3-crypto/constants"
 	"github.com/iden3/go-iden3-crypto/poseidon"
+	jsoniter "github.com/json-iterator/go"
 )
 
 const (
@@ -61,13 +64,12 @@ func Split(rawInput []byte) (shards []string, first []byte, err error) {
 			if x == 0 && y == 0 {
 				first = buf.Bytes()
 			}
-
 			bigInt := new(big.Int)
 			s := sha(buf.Bytes())
 			bigInt.SetBytes(s)
 			h, err := poseidon.Hash([]*big.Int{bigInt.Mod(bigInt, constants.Q)})
 			if err != nil {
-				panic(err)
+				return nil, nil, err
 			}
 
 			shards = append(shards, h.String())
@@ -89,4 +91,36 @@ func min(a, b int) int {
 	}
 
 	return a
+}
+
+// js interface
+// error define
+var (
+	InvalidDataLength = errors.New("Invalid input data")
+)
+
+type SplitResult struct {
+	Shards []string `json:"shards,omitempty"`
+	First  string   `json:"first,omitempty"`
+}
+
+func SplitJs(this js.Value, inputs []js.Value) interface{} {
+	input, err := base64.StdEncoding.DecodeString(inputs[0].String())
+	if err != nil {
+		return err
+	}
+
+	shards, first, err := Split(input)
+	if err != nil {
+		return err
+	}
+
+	result := SplitResult{
+		Shards: shards,
+		First:  base64.StdEncoding.EncodeToString(first),
+	}
+
+	b, _ := jsoniter.Marshal(result)
+
+	return string(b)
 }
