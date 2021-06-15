@@ -38,3 +38,5 @@ Data market homepage is now working. User guide right [here](./website/user-guid
   ├── README.md
   ```
 
+## Testing Guide
+All data market unit tests are independent. and the unit tests description is included in each sub-module
