@@ -3,95 +3,29 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "data_item_id",
-				"type": "uint256"
-			},
-			{
-				"name": "private_key",
+				"name": "encrypted_data_hash",
 				"type": "bytes"
-			}
-		],
-		"name": "withdraw",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "data_item_id",
-				"type": "uint256"
-			}
-		],
-		"name": "refund",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "unpause",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "paused",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "start",
-				"type": "uint256"
 			},
 			{
-				"name": "limit",
+				"name": "private_key_hash",
+				"type": "bytes"
+			},
+			{
+				"name": "extra",
+				"type": "bytes"
+			},
+			{
+				"name": "value",
 				"type": "uint256"
 			}
 		],
-		"name": "getCommodityList",
+		"name": "create",
 		"outputs": [
 			{
-				"components": [
-					{
-						"name": "id",
-						"type": "uint256"
-					},
-					{
-						"name": "extra",
-						"type": "bytes"
-					}
-				],
 				"name": "",
-				"type": "tuple[]"
+				"type": "uint256"
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "pause",
-		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -111,18 +45,117 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
+		"anonymous": false,
+		"inputs": [
 			{
-				"name": "",
+				"indexed": false,
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "data_item_id",
+				"type": "uint256"
+			}
+		],
+		"name": "Participate",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "data_item_id",
+				"type": "uint256"
+			}
+		],
+		"name": "refund",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "data_item_id",
+				"type": "uint256"
+			}
+		],
+		"name": "Refund",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newOwner",
 				"type": "address"
 			}
 		],
+		"name": "transferOwnership",
+		"outputs": [],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "data_item_id",
+				"type": "uint256"
+			},
+			{
+				"name": "private_key",
+				"type": "string"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "data_item_id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Withdraw",
+		"type": "event"
 	},
 	{
 		"constant": true,
@@ -160,11 +193,15 @@
 			},
 			{
 				"name": "priv_key",
-				"type": "bytes"
+				"type": "string"
 			},
 			{
 				"name": "my_support",
 				"type": "uint256"
+			},
+			{
+				"name": "extra",
+				"type": "bytes"
 			}
 		],
 		"payable": false,
@@ -172,127 +209,80 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
 			{
-				"name": "encrypted_data_hash",
-				"type": "bytes"
+				"name": "start",
+				"type": "uint256"
 			},
 			{
-				"name": "private_key_hash",
-				"type": "bytes"
-			},
-			{
-				"name": "extra",
-				"type": "bytes"
-			},
-			{
-				"name": "value",
+				"name": "limit",
 				"type": "uint256"
 			}
 		],
-		"name": "create",
+		"name": "getCommodityList",
+		"outputs": [
+			{
+				"components": [
+					{
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"name": "extra",
+						"type": "bytes"
+					},
+					{
+						"name": "status",
+						"type": "uint8"
+					}
+				],
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getMarketInfo",
+		"outputs": [
+			{
+				"name": "all",
+				"type": "uint64"
+			},
+			{
+				"name": "sold",
+				"type": "uint64"
+			},
+			{
+				"name": "selling",
+				"type": "uint64"
+			},
+			{
+				"name": "participate",
+				"type": "uint64"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
 		"outputs": [
 			{
 				"name": "",
-				"type": "uint256"
+				"type": "address"
 			}
 		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "bidder",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "data_item_id",
-				"type": "uint256"
-			}
-		],
-		"name": "Participate",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "bidder",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "data_item_id",
-				"type": "uint256"
-			}
-		],
-		"name": "Refund",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "data_item_id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "Withdraw",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [],
-		"name": "Pause",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [],
-		"name": "Unpause",
-		"type": "event"
 	}
 ]

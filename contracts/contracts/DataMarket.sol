@@ -12,32 +12,31 @@ contract Ownable {
     address public owner;
 
     /**
-      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
-      * account.
-      */
+     * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+     * account.
+     */
     constructor() public {
         owner = msg.sender;
     }
 
     /**
-      * @dev Throws if called by any account other than the owner.
-      */
+     * @dev Throws if called by any account other than the owner.
+     */
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
 
     /**
-    * @dev Allows the current owner to transfer control of the contract to a newOwner.
-    * @param newOwner The address to transfer ownership to.
-    */
+     * @dev Allows the current owner to transfer control of the contract to a newOwner.
+     * @param newOwner The address to transfer ownership to.
+     */
     function transferOwnership(address newOwner) public onlyOwner {
         if (newOwner != address(0)) {
             owner = newOwner;
         }
     }
 }
-
 
 /**
  * @title SafeMath
@@ -73,7 +72,7 @@ library SafeMath {
 }
 
 contract DataMarket is Ownable {
-    using SafeMath for uint;
+    using SafeMath for uint256;
 
     enum CommodityStatus {Selling, Done}
     uint256 CommodityID = 0;
@@ -86,24 +85,23 @@ contract DataMarket is Ownable {
 
     struct Commodity {
         uint256 id;
-        uint value;
-        uint received_value;
+        uint256 value;
+        uint256 received_value;
         bytes encrypted_data_hash;
         bytes extra;
-        
+        address publisher;
         string privateKey;
         bytes privateKeyHash;
-        
-        mapping(address => uint) buyer;
+        mapping(address => uint256) buyer;
         CommodityStatus status;
         uint8 flag;
     }
 
     mapping(uint256 => Commodity) _market; // data_item_id => Commodity
 
-    event Participate(address bidder, uint amount, uint256 data_item_id); // buyer participate event
-    event Refund(address bidder, uint amount, uint256 data_item_id); // buyer refund event
-    event Withdraw(uint256 data_item_id, uint amount); // seller withdraw event
+    event Participate(address bidder, uint256 amount, uint256 data_item_id); // buyer participate event
+    event Refund(address bidder, uint256 amount, uint256 data_item_id); // buyer refund event
+    event Withdraw(uint256 data_item_id, uint256 amount); // seller withdraw event
 
     constructor() public {
         // init market infomation
@@ -111,7 +109,7 @@ contract DataMarket is Ownable {
         sold = 0;
         selling = 0;
         participate_addr = 0;
-        
+
         owner = msg.sender;
     }
 
@@ -123,9 +121,8 @@ contract DataMarket is Ownable {
     function create(
         bytes memory encrypted_data_hash,
         bytes memory private_key_hash,
-
         bytes memory extra,
-        uint value
+        uint256 value
     ) public returns (uint256) {
         require(value > 0, "value is zero");
         _market[CommodityID].id = CommodityID;
@@ -138,9 +135,10 @@ contract DataMarket is Ownable {
         _market[CommodityID].flag = 1;
         _market[CommodityID].extra = extra;
         _market[CommodityID].value = value;
-        
-        all ++;
-        selling ++;
+        _market[CommodityID].publisher = msg.sender;
+
+        all++;
+        selling++;
         return CommodityID++;
     }
 
@@ -150,18 +148,20 @@ contract DataMarket is Ownable {
      */
     function participate(uint256 data_item_id) public payable {
         require(msg.value > 0, "value is zero");
-        
-        if (_market[data_item_id].flag != 1 || 
-        _market[data_item_id].status != CommodityStatus.Selling)
-        {
+
+        // Commodity not exist or has been done
+        if (
+            _market[data_item_id].flag != 1 ||
+            _market[data_item_id].status != CommodityStatus.Selling
+        ) {
             msg.sender.transfer(msg.value);
-            return ;
+            return;
         }
 
         _market[data_item_id].received_value += msg.value;
         _market[data_item_id].buyer[msg.sender] += msg.value;
-        
-        participate_addr ++;
+
+        participate_addr++;
         emit Participate(msg.sender, msg.value, data_item_id);
         return;
     }
@@ -201,10 +201,10 @@ contract DataMarket is Ownable {
     modulus: rsa modulus
     sign: sign(encrypted_data_hash)
      */
-    function withdraw(
-        uint256 data_item_id,
-        string memory private_key
-    ) public payable {
+    function withdraw(uint256 data_item_id, string memory private_key)
+        public
+        payable
+    {
         require(_market[data_item_id].flag == 1, "item is not exist");
         require(
             _market[data_item_id].status == CommodityStatus.Selling,
@@ -213,27 +213,42 @@ contract DataMarket is Ownable {
 
         Commodity memory data_item = _market[data_item_id];
         bytes memory pkBytes = abi.encodePacked(sha256(bytes(private_key)));
-        require(equals(pkBytes, data_item.privateKeyHash) == true, "check failed");
-    
+        require(
+            equals(pkBytes, data_item.privateKeyHash) == true,
+            "check failed"
+        );
+
         msg.sender.transfer(_market[data_item_id].received_value);
         _market[data_item_id].privateKey = private_key;
         _market[data_item_id].status = CommodityStatus.Done;
-        
-        selling --;
-        sold ++;
+
+        selling--;
+        sold++;
         emit Withdraw(data_item_id, _market[data_item_id].received_value);
         return;
     }
-    
-     function equals(bytes memory self, bytes memory other) internal pure returns (bool equal) {
+
+    function equals(bytes memory self, bytes memory other)
+        internal
+        pure
+        returns (bool equal)
+    {
         if (self.length != other.length) {
             return false;
         }
-        uint addr;
-        uint addr2;
+        uint256 addr;
+        uint256 addr2;
         assembly {
-            addr := add(self, /*BYTES_HEADER_SIZE*/32)
-            addr2 := add(other, /*BYTES_HEADER_SIZE*/32)
+            addr := add(
+                self,
+                /*BYTES_HEADER_SIZE*/
+                32
+            )
+            addr2 := add(
+                other,
+                /*BYTES_HEADER_SIZE*/
+                32
+            )
         }
         equal = Memory.equals(addr, addr2, self.length);
     }
@@ -252,7 +267,8 @@ contract DataMarket is Ownable {
             bytes memory priv_key_hash,
             string memory priv_key,
             uint256 my_support,
-            bytes memory extra
+            bytes memory extra,
+            address publisher
         )
     {
         require(_market[data_item_id].flag == 1, "item is not exist");
@@ -265,12 +281,13 @@ contract DataMarket is Ownable {
         priv_key = _market[data_item_id].privateKey;
         my_support = _market[data_item_id].buyer[msg.sender];
         extra = _market[data_item_id].extra;
+        publisher = _market[data_item_id].publisher;
     }
-
 
     struct miniCommodity {
         uint256 id;
         bytes extra;
+        CommodityStatus status;
     }
 
     // get Commodity list
@@ -288,28 +305,27 @@ contract DataMarket is Ownable {
         for (uint256 i = 0; i < limit; i++) {
             results[i].id = _market[start].id;
             results[i].extra = _market[start].extra;
+            results[i].status = _market[start].status;
             start++;
         }
 
         return results;
     }
-    
-    
+
     // get market infomation
     function getMarketInfo()
-        public 
+        public
         view
-        returns(
+        returns (
             uint64 all,
             uint64 sold,
             uint64 selling,
             uint64 participate
-               )
-        {
-            all = all;
-            sold = sold;
-            selling = selling;
-            participate = participate_addr;
-        }
-
+        )
+    {
+        all = all;
+        sold = sold;
+        selling = selling;
+        participate = participate_addr;
+    }
 }

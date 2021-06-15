@@ -16,7 +16,7 @@ func Hash(this js.Value, inputs []js.Value) interface{} {
 	}
 
 	bigInt := new(big.Int)
-	s := sha(buf.Bytes())
+	s := sha(input)
 	bigInt.SetBytes(s)
 	h, err := poseidon.Hash([]*big.Int{bigInt.Mod(bigInt, constants.Q)})
 	if err != nil {
