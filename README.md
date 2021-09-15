@@ -1,5 +1,5 @@
 # DF-data-market
-DataMarket is a data publish protocol using Zero-knowledge proof (ZKP) proposed by Barry whitehay. For the detail specification. please read the [post](https://hackmd.io/3D4lOndVSi6Ee0W_XL4Jrw?view)
+DataMarket is a data publish protocol using Zero-knowledge proof (ZKP) proposed by Barry Whitehat. For the detail specification. please read the [post](https://hackmd.io/3D4lOndVSi6Ee0W_XL4Jrw?view)
 
 [Telegram group](https://t.me/joinchat/_eztiSjvJtMyYzdl)   
 [Discord](https://discord.gg/Bg7FRGGp)   
