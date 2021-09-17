@@ -20,7 +20,7 @@ Users can browse all the data in the market, download some data that has been pu
 
 
 ## Get Started
-Data market homepage is now working. User guide right [here](./website/user-guide.md)
+Data market homepage is now working. User guide right [here](./website/user-guide.md). It works on the Kovan testnet right now.
 
 ## Project modules
   ```
