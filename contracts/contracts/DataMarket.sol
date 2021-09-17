@@ -211,6 +211,8 @@ contract DataMarket is Ownable {
             "item is done"
         );
 
+        require(_market[data_item_id].publisher == msg.sender, "Invalid publisher");
+
         Commodity memory data_item = _market[data_item_id];
         bytes memory pkBytes = abi.encodePacked(sha256(bytes(private_key)));
         require(
