@@ -1,0 +1,277 @@
+/**
+* common
+* @author Rainoy <email:rainoy.me@gmail.com>
+* @version v1.0.0
+*/
+
+@charset "utf-8";
+/**
+* global vars
+*/
+$bg-white: #fff;
+$bg-grey: #f2f2f2;
+$bg-blue: #2869fa;
+$bg-green: #3ec140;
+$bg-orange: #f09212;
+$bg-red: #f24141;
+
+$bg-grey2: #f0f0f0;
+$bg-grey3: #fafafa;
+
+$tx-bold: #242424;
+$tx-light: #b3b3b3;
+$tx-light2: #ddd;
+$tx-bold2: #5a5a5a;
+$tx-blue: #1656ce;
+
+$ft-xlg: 36px;
+$ft-lg: 24px;
+$ft-slg: 16px;
+$ft-normal: 14px;
+$ft-xs: 13px;
+$ft-xxs: 12px;
+/**
+* common mixin
+*/
+
+// 1px border
+@mixin border(
+  $color: #ddd,
+  $top: 0,
+  $right: 0,
+  $bottom: 0,
+  $left: 0,
+  $radius: 0,
+  $all: 0,
+  $style: solid,
+  $pos: relative
+) {
+  position: $pos;
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: {
+      color: $color;
+      width: if($all !=0, $all, $top $right $bottom $left);
+      style: $style;
+    }
+    width: 200%;
+    height: 200%;
+    transform: scale(0.5, 0.5);
+    transform-origin: 0 0;
+    border-radius: $radius * 2;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+
+// 多行溢出省略
+@mixin ell($line: 2) {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $line;
+}
+
+/**
+ * arrow
+ */
+
+@mixin arrows($width: 8px, $border: 2px, $color: #bbbbbb, $direction: 'right') {
+  $deg: 0;
+  @if $direction== 'left' {
+    $deg: 45deg;
+  }
+  @if $direction== 'right' {
+    $deg: -135deg;
+  }
+  @if $direction== 'top' {
+    $deg: 135deg;
+  }
+  @if $direction== 'bottom' {
+    $deg: -45deg;
+  }
+  content: ' ';
+  width: $width;
+  height: $width;
+  display: inline-block;
+  border-left: $border solid $color;
+  border-bottom: $border solid $color;
+  transform: rotate($deg) translateY(-2px);
+  -webkit-transform: rotate($deg) translateY(-2px);
+}
+/**
+ * 渐变
+ */
+
+@mixin gradient($beginColor: #7fceff, $endColor: #9079ff, $direction: 'left') {
+  $deg: 0;
+  @if $direction== 'left' {
+    $deg: -90deg;
+  }
+  @if $direction== 'right' {
+    $deg: 90deg;
+  }
+  @if $direction== 'bottom' {
+    $deg: 180deg;
+  }
+  @if $direction== 'top' {
+    $deg: 0deg;
+  }
+  background-image: linear-gradient($deg, $beginColor 0%, $endColor 100%);
+}
+
+/**
+ * checkbox
+ */
+
+@mixin checkbox(
+  $checkedBg: #60a0f4,
+  $borderColor: #ddd,
+  $radius: 50%,
+  $height: 20px,
+  $width: 20px,
+  $pos: relative,
+  $margin: 0 3px 0 0
+) {
+  height: $height;
+  width: $width;
+  border-radius: $radius;
+  border: 1px solid $borderColor;
+  margin: $margin;
+  position: $pos;
+  &:checked {
+    border: 1px solid $checkedBg;
+    background: $checkedBg;
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      height: 5px;
+      width: 10px;
+      border-bottom: 2px solid #fff;
+      border-left: 2px solid #fff;
+      transform: translate(-50%, -50%) rotate(-60deg);
+      transform-origin: 4px 2px;
+    }
+  }
+}
+
+/**
+ * radio
+ */
+
+@mixin radio(
+  $height: 16px,
+  $width: 16px,
+  $radius: 50%,
+  $borderColor: #ddd,
+  $margin: 0,
+  $checkedBg: #60a0f4,
+  $pos: relative
+) {
+  height: $height;
+  width: $width;
+  border-radius: $radius;
+  border: 1px solid $borderColor;
+  margin: $margin;
+  position: $pos;
+  &:checked {
+    border: 1px solid $checkedBg;
+    background: $checkedBg;
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      height: 6px;
+      width: 6px;
+      margin-top: -3px;
+      margin-left: -3px;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+  }
+}
+
+/**
+ * switch
+ */
+
+@mixin switch(
+  $width: 40px,
+  $height: 20px,
+  $margin: 0 0 0 10px,
+  $radius: 20px,
+  $borderColor: #ccc,
+  $bgColor: #ccc,
+  $beforeWidth: 18px,
+  $beforeHeight: 18px,
+  $beforeRadius: 18px,
+  $beforeLeft: 20px,
+  $checkedBgColor: #60bf4d
+) {
+  position: relative;
+  display: inline-block;
+  width: $width;
+  height: $height;
+  margin: $margin;
+  border-radius: $radius;
+  vertical-align: middle;
+  border: 1px solid $borderColor;
+  padding: 1px 0 1px;
+  cursor: pointer;
+  background-color: $bgColor;
+  font-size: 0;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 0px;
+    display: block;
+    width: $beforeWidth;
+    height: $beforeHeight;
+    border-radius: $beforeRadius;
+    border: 1px #ddd solid;
+    background-color: #fff;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.1), 0px 2px 2px 0px rgba(0, 0, 0, 0.05);
+    transition: all 0.18s 0.1s ease;
+  }
+  &:checked {
+    background-color: $checkedBgColor;
+    border: 0;
+    &::before {
+      top: 1px;
+      left: $beforeLeft;
+    }
+  }
+}
+
+// keyframes
+@mixin keyframes($animationName) {
+  @keyframes #{$animationName} {
+    @content;
+  }
+}
+
+/**
+ * %
+ */
+
+// 单行溢出省略
+%ell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ios流畅内滚动的秘密
+%tscroll {
+  -webkit-overflow-scrolling: touch;
+}
