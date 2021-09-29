@@ -1,0 +1,13 @@
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.svn
+.idea
+.eslintrc
+*.log
+*.css.map
+*.DS_Store
+lib/
+dist/
+node_modules/
+$RECYCLE.BIN

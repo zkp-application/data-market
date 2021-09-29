@@ -1,15 +1,6 @@
 # DataMarket
 >Data-Market website.
 
-## Website 
->current website base on [Kovan](https://kovan.etherscan.io/)  testnet
-* Ethereum testnet: Kovan
-* Contract address: 0x393b6586B4EBCa8133E8815cd0953e4D6780F001    
-* Wallet: [Metamask](https://metamask.io/)
-
-[Test website](https://zkp-datamarket.com/)
-
-
 ## Usage
 - init
   - ```git clone the repo.```
