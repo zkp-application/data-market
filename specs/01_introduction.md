@@ -27,8 +27,8 @@ When I buy data I want to know that
 ### Integrity checks 
 
 1. The seller wants to prove to the users that the encrypted file has the expected content. The seller commits to revealing random pieces of the file.
-2. Buyers manually checks the random pieces to validate that this file has the expected content.
-
+2. Buyers manually checks the random pieces to validate that this file has the expected content.   
+3. Sellers need to prove that the private key can decrypt a random part of the data 
 ## Detailed Description
 
 We want to test this idea with audio files e.g. a podcast.
