@@ -28,7 +28,7 @@ uint ZERO_VALUE = uint256(keccak256(abi.encodePacked('df_data_market'))) % SNARK
 | encrypted_data_hash |  Encrypted data hash|
 | value  |   Want to sell value  |
 
-Several random numbers will be generated here. and the publisher should use these random number as the public input parameters $randomPaths of the proof in
+* Improvement: Several random numbers will be generated here. and the publisher should use these random number as the public input parameters $randomPaths of the proof
 
 #### 2: participate(uint8[] data_item_id)
 participate the func does not have any params.  address and value was included in the eth transaction. 
