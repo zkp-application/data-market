@@ -1,0 +1,2 @@
+### 1: Encrypted data Publish check
+We believe that uploading data to a decentralized storage service can solve many problems (eg. centralized Data is maliciously attacked). A better way is to use IPFS (Decentralized Storage). We make sure that all encrypted data comes from IPFS to prove that the publisher has published their data. We use the [Infura](https://infura.io/docs/ipfs) api service to publish/query encrypted file

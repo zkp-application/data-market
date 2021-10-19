@@ -1,3 +1,0 @@
-### Maybe need prove some properties of the data
-
-coming soon..........
