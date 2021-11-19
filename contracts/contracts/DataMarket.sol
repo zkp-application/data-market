@@ -2,6 +2,8 @@ pragma solidity >=0.4.20 <0.6.0;
 pragma experimental ABIEncoderV2;
 
 import {Memory} from "../github/ethereum/solidity-examples/Memory.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+
 
 /**
  * @title Ownable
@@ -71,7 +73,7 @@ library SafeMath {
     }
 }
 
-contract DataMarket is Ownable {
+contract DataMarket is Ownable, VRFConsumerBase {
     using SafeMath for uint256;
 
     enum CommodityStatus {Selling, Done}
@@ -82,6 +84,10 @@ contract DataMarket is Ownable {
     uint64 sold;
     uint64 selling;
     uint64 participate_addr;
+
+    // chainlink VRF params
+    bytes32 internal keyHash;
+    uint256 internal fee;
 
     struct Commodity {
         uint256 id;
@@ -95,15 +101,23 @@ contract DataMarket is Ownable {
         mapping(address => uint256) buyer;
         CommodityStatus status;
         uint8 flag;
+        // VRF randomness
+        bytes32 requestId;
+        uint256[16] memory randomness 
     }
 
+
     mapping(uint256 => Commodity) _market; // data_item_id => Commodity
+    mapping(bytes32 => uint256) _requestid2commodityid;
 
     event Participate(address bidder, uint256 amount, uint256 data_item_id); // buyer participate event
     event Refund(address bidder, uint256 amount, uint256 data_item_id); // buyer refund event
     event Withdraw(uint256 data_item_id, uint256 amount); // seller withdraw event
 
-    constructor() public {
+    constructor() VRFConsumerBase(
+            0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9, // VRF Coordinator
+            0xa36085F69e2889c224210F603D836748e7dC0088  // LINK Token
+    ) {
         // init market infomation
         all = 0;
         sold = 0;
@@ -111,7 +125,47 @@ contract DataMarket is Ownable {
         participate_addr = 0;
 
         owner = msg.sender;
+
+        keyHash = 0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4;
+        fee = 0.1 * 10 ** 18; // 0.1 LINK (Varies by network)
     }
+
+    // chainlink function
+
+    /** 
+     * Requests randomness 
+     */
+    function getRandomNumber() public returns (bytes32 requestId) {
+        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
+        
+        return requestRandomness(keyHash, fee);
+    }
+
+     /**if (
+            _market[data_item_id].flag != 1 ||
+            _market[data_item_id].status != CommodityStatus.Selling
+        )
+     * Callback function used by VRF Coordinator
+     */
+    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+        uint256 data_item_id = _requestid2commodityid[requestId];
+        if (
+            _market[data_item_id].flag != 1 ||
+            _market[data_item_id].status != CommodityStatus.Selling
+        ) {
+            return;
+        }
+
+        for (uint256 i = 0; i < 16; i++) {
+            // expand the random number
+            _market[data_item_id].randomness[i] = uint256(keccak256(abi.encode(randomResult, i)));
+        }
+
+        return;
+    }
+
+    
+    // chainlink end
 
     // create a new Commodity in the market
     /*
@@ -139,6 +193,10 @@ contract DataMarket is Ownable {
 
         all++;
         selling++;
+
+        bytes32 requestId = getRandomNumber();
+        _requestid2commodityid[requestId] = CommodityID;
+        
         return CommodityID++;
     }
 
